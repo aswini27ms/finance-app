@@ -18,7 +18,12 @@ JWT_EXPIRE=7d
 NODE_ENV=development
 ```
 
-3. Make sure MongoDB is running on your system
+If you want to use MongoDB Atlas instead of local MongoDB, set `MONGODB_URI` to your Atlas connection string in `.env`, for example:
+```
+MONGODB_URI=mongodb+srv://<username>:<password>@finance.gs5voud.mongodb.net/<database>?retryWrites=true&w=majority
+```
+
+3. Make sure MongoDB is running on your system or your Atlas cluster is accessible
 
 ## Running the Server
 
