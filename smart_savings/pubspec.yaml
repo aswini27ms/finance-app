@@ -22,8 +22,10 @@ dependencies:
   flutter_neumorphic_plus: ^3.3.0
   intl: ^0.19.0
   http: ^1.2.0
-  shared_preferences: ^2.2.2
-  url_launcher: ^6.3.0
+  shared_preferences: ^2.5.5
+  url_launcher: ^6.3.2
+  # shared_preferences: ^2.3.0  # Temporarily disabled due to Kotlin compilation issues
+  # url_launcher: ^6.3.2  # Temporarily disabled due to Kotlin compilation issues
 
 dev_dependencies:
   flutter_lints: ^5.0.0
