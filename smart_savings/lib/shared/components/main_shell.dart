@@ -13,7 +13,8 @@ import '../../services/savings_service.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/formatters.dart';
 
-final GlobalKey<ScaffoldState> mainShellScaffoldKey = GlobalKey<ScaffoldState>();
+final GlobalKey<ScaffoldState> mainShellScaffoldKey =
+    GlobalKey<ScaffoldState>();
 final sidebarOpenProvider = StateProvider<bool>((ref) => false);
 
 class MainShell extends ConsumerWidget {
@@ -26,7 +27,8 @@ class MainShell extends ConsumerWidget {
       key: mainShellScaffoldKey,
       extendBody: false,
       drawer: const _PremiumSidebar(),
-      onDrawerChanged: (open) => ref.read(sidebarOpenProvider.notifier).state = open,
+      onDrawerChanged: (open) =>
+          ref.read(sidebarOpenProvider.notifier).state = open,
       body: PremiumPageBackground(child: child),
     );
   }
@@ -146,8 +148,8 @@ class _PremiumSidebar extends ConsumerWidget {
                 icon: Icons.create_new_folder_rounded,
                 label: 'Create Folder',
                 subtitle: 'Add an expense bucket',
-                gradient: const LinearGradient(colors: [Color(0xFF6366F1), Color(0xFF7C3AED)]),
-                glowColor: const Color(0xFF7C3AED),
+                accentColor: const Color(0xFF6366F1),
+                patternType: _PatternType.grid,
                 onTap: () {
                   Navigator.pop(context);
                   showCreateFolderSheet(context);
@@ -157,8 +159,8 @@ class _PremiumSidebar extends ConsumerWidget {
                 icon: Icons.add_circle_outline_rounded,
                 label: 'Add Expense',
                 subtitle: 'Record a transaction',
-                gradient: const LinearGradient(colors: [Color(0xFFEC4899), Color(0xFFF43F5E)]),
-                glowColor: const Color(0xFFEC4899),
+                accentColor: const Color(0xFFEC4899),
+                patternType: _PatternType.dots,
                 onTap: () {
                   Navigator.pop(context);
                   showAddExpenseSheet(context);
@@ -168,8 +170,8 @@ class _PremiumSidebar extends ConsumerWidget {
                 icon: Icons.flag_rounded,
                 label: 'Add Goal Item',
                 subtitle: 'Save for something special',
-                gradient: const LinearGradient(colors: [Color(0xFF22C55E), Color(0xFF06B6D4)]),
-                glowColor: const Color(0xFF22C55E),
+                accentColor: const Color(0xFF22C55E),
+                patternType: _PatternType.diagonal,
                 onTap: () {
                   Navigator.pop(context);
                   showModalBottomSheet(
@@ -185,8 +187,8 @@ class _PremiumSidebar extends ConsumerWidget {
                 icon: Icons.auto_awesome_rounded,
                 label: 'AI Coach',
                 subtitle: 'Smart financial advice',
-                gradient: const LinearGradient(colors: [Color(0xFFF59E0B), Color(0xFFEC4899)]),
-                glowColor: const Color(0xFFF59E0B),
+                accentColor: const Color(0xFFF59E0B),
+                patternType: _PatternType.chevron,
                 onTap: () {
                   Navigator.pop(context);
                   context.go('/coach');
@@ -196,19 +198,53 @@ class _PremiumSidebar extends ConsumerWidget {
               _SidebarDivider(),
               _SectionLabel('Navigate'),
               const SizedBox(height: 4),
-              Expanded(
+              Flexible(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: const [
-                      _NavItem(icon: Icons.home_rounded, label: 'Home', path: '/dashboard'),
-                      _NavItem(icon: Icons.folder_rounded, label: 'Folders', path: '/folders'),
-                      _NavItem(icon: Icons.receipt_long_rounded, label: 'Transactions', path: '/transactions'),
-                      _NavItem(icon: Icons.flag_rounded, label: 'Goals', path: '/goals'),
-                      _NavItem(icon: Icons.bar_chart_rounded, label: 'Analytics', path: '/analytics'),
-                      _NavItem(icon: Icons.auto_awesome_rounded, label: 'AI Coach', path: '/coach'),
-                      _NavItem(icon: Icons.person_rounded, label: 'Profile', path: '/profile'),
-                      _NavItem(icon: Icons.settings_rounded, label: 'Settings', path: '/settings'),
+                      _NavItem(
+                        icon: Icons.home_rounded,
+                        label: 'Home',
+                        path: '/dashboard',
+                      ),
+                      _NavItem(
+                        icon: Icons.folder_rounded,
+                        label: 'Folders',
+                        path: '/folders',
+                      ),
+                      _NavItem(
+                        icon: Icons.receipt_long_rounded,
+                        label: 'Transactions',
+                        path: '/transactions',
+                      ),
+                      _NavItem(
+                        icon: Icons.flag_rounded,
+                        label: 'Goals',
+                        path: '/goals',
+                      ),
+                      _NavItem(
+                        icon: Icons.bar_chart_rounded,
+                        label: 'Analytics',
+                        path: '/analytics',
+                      ),
+                      _NavItem(
+                        icon: Icons.auto_awesome_rounded,
+                        label: 'AI Coach',
+                        path: '/coach',
+                      ),
+                      _NavItem(
+                        icon: Icons.person_rounded,
+                        label: 'Profile',
+                        path: '/profile',
+                      ),
+                      _NavItem(
+                        icon: Icons.settings_rounded,
+                        label: 'Settings',
+                        path: '/settings',
+                      ),
                     ],
                   ),
                 ),
@@ -225,6 +261,7 @@ class _PremiumSidebar extends ConsumerWidget {
   }
 }
 
+// ── Sidebar Shell with geometric pattern background ───────────────────────────
 class _SidebarShell extends StatelessWidget {
   final Widget child;
   const _SidebarShell({required this.child});
@@ -233,12 +270,7 @@ class _SidebarShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF040914), Color(0xFF0A1325), Color(0xFF0D1A30), Color(0xFF0F1E3A)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          stops: [0.0, 0.28, 0.65, 1.0],
-        ),
+        color: Color(0xFF070D1A),
         borderRadius: BorderRadius.only(
           topRight: Radius.circular(38),
           bottomRight: Radius.circular(38),
@@ -251,46 +283,50 @@ class _SidebarShell extends StatelessWidget {
         ),
         child: Stack(
           children: [
+            // Geometric grid pattern background
             Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
+              child: CustomPaint(painter: _GeometricPatternPainter()),
+            ),
+            // Top accent bar
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 3,
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.white.withValues(alpha: 0.03),
-                      Colors.transparent,
-                      Colors.white.withValues(alpha: 0.02),
+                      Color(0xFF6366F1),
+                      Color(0xFF7C3AED),
+                      Color(0xFFEC4899),
                     ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(38),
                   ),
                 ),
               ),
             ),
-            Positioned(top: -90, right: -90, child: _AnimatedGlowOrb(size: 280, color: AppColors.primary, opacity: 0.20, durationMs: 4200)),
-            Positioned(bottom: 40, left: -70, child: _AnimatedGlowOrb(size: 220, color: const Color(0xFF06B6D4), opacity: 0.10, durationMs: 5000)),
-            Positioned(top: 260, right: -20, child: _AnimatedGlowOrb(size: 160, color: const Color(0xFFEC4899), opacity: 0.08, durationMs: 3600)),
+            // Right edge accent line
             Positioned(
-              top: 120,
-              right: -12,
+              top: 60,
+              right: 0,
+              bottom: 60,
               child: Container(
-                width: 90,
-                height: 260,
+                width: 1,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.white.withValues(alpha: 0.08),
-                      Colors.white.withValues(alpha: 0.0),
+                      Colors.transparent,
+                      const Color(0xFF6366F1).withValues(alpha: 0.3),
+                      const Color(0xFFEC4899).withValues(alpha: 0.2),
+                      Colors.transparent,
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                   ),
-                  borderRadius: BorderRadius.circular(999),
                 ),
-              ).animate(onPlay: (c) => c.repeat(reverse: true)).fade(duration: 2200.ms, begin: 0.18, end: 0.04),
-            ),
-            Positioned.fill(
-              child: CustomPaint(
-                painter: _SidebarSparklePainter(),
               ),
             ),
             child,
@@ -301,84 +337,70 @@ class _SidebarShell extends StatelessWidget {
   }
 }
 
-class _AnimatedGlowOrb extends StatefulWidget {
-  final double size;
-  final Color color;
-  final double opacity;
-  final int durationMs;
-
-  const _AnimatedGlowOrb({
-    required this.size,
-    required this.color,
-    required this.opacity,
-    required this.durationMs,
-  });
-
-  @override
-  State<_AnimatedGlowOrb> createState() => _AnimatedGlowOrbState();
-}
-
-class _AnimatedGlowOrbState extends State<_AnimatedGlowOrb> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: widget.durationMs))
-      ..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        final scale = 0.94 + (_controller.value * 0.12);
-        return Transform.scale(scale: scale, child: child);
-      },
-      child: Container(
-        width: widget.size,
-        height: widget.size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [widget.color.withValues(alpha: widget.opacity), Colors.transparent],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SidebarSparklePainter extends CustomPainter {
+// ── Geometric dot-grid pattern painter ───────────────────────────────────────
+class _GeometricPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
-    final sparkles = <Offset>[
-      Offset(size.width * 0.82, size.height * 0.14),
-      Offset(size.width * 0.74, size.height * 0.26),
-      Offset(size.width * 0.88, size.height * 0.42),
-      Offset(size.width * 0.78, size.height * 0.72),
-      Offset(size.width * 0.66, size.height * 0.84),
-    ];
-    final colors = [AppColors.primary, AppColors.accent, const Color(0xFFEC4899), Colors.white];
+    final dotPaint = Paint()..style = PaintingStyle.fill;
+    const spacing = 28.0;
+    const dotRadius = 1.0;
 
-    for (var i = 0; i < sparkles.length; i++) {
-      paint.color = colors[i % colors.length].withValues(alpha: i == 3 ? 0.22 : 0.16);
-      canvas.drawCircle(sparkles[i], i == 3 ? 2.6 : 2.0, paint);
+    for (double x = spacing; x < size.width; x += spacing) {
+      for (double y = spacing; y < size.height; y += spacing) {
+        final distFromTop = y / size.height;
+        final distFromRight = x / size.width;
+        final opacity = (0.06 + distFromRight * 0.04) * (1 - distFromTop * 0.5);
+        dotPaint.color = Colors.white.withValues(
+          alpha: opacity.clamp(0.0, 1.0),
+        );
+        canvas.drawCircle(Offset(x, y), dotRadius, dotPaint);
+      }
     }
+
+    // Draw diagonal accent lines in top-right area
+    final linePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.5;
+
+    for (int i = 0; i < 5; i++) {
+      final startX = size.width * 0.6 + i * 18.0;
+      linePaint.color = const Color(
+        0xFF6366F1,
+      ).withValues(alpha: 0.06 - i * 0.01);
+      canvas.drawLine(
+        Offset(startX, 0),
+        Offset(startX - 120, size.height * 0.4),
+        linePaint,
+      );
+    }
+
+    // Corner bracket decoration top-right
+    final bracketPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0
+      ..color = const Color(0xFF6366F1).withValues(alpha: 0.15);
+
+    final path = Path()
+      ..moveTo(size.width - 40, 60)
+      ..lineTo(size.width - 10, 60)
+      ..lineTo(size.width - 10, 90);
+    canvas.drawPath(path, bracketPaint);
+
+    final path2 = Path()
+      ..moveTo(size.width - 40, size.height - 60)
+      ..lineTo(size.width - 10, size.height - 60)
+      ..lineTo(size.width - 10, size.height - 90);
+    canvas.drawPath(path2, bracketPaint);
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+// ── Pattern types for action cards ───────────────────────────────────────────
+enum _PatternType { grid, dots, diagonal, chevron }
+
+// ── Sidebar Header ────────────────────────────────────────────────────────────
 class _SidebarHeader extends StatelessWidget {
   final String initial, name, email;
   final double balance, remaining;
@@ -396,153 +418,150 @@ class _SidebarHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 22, 20, 18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.035),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.10),
-                  blurRadius: 30,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 14),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.04),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        ),
+        child: Column(
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          width: 58,
-                          height: 58,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF6366F1), Color(0xFF7C3AED)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF6366F1).withValues(alpha: 0.55),
-                                blurRadius: 24,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              initial,
-                              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 2,
-                          right: 2,
-                          child: Container(
-                            width: 13,
-                            height: 13,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF22C55E),
-                              shape: BoxShape.circle,
-                              border: Border.all(color: const Color(0xFF07101F), width: 2),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFF22C55E).withValues(alpha: 0.5),
-                                  blurRadius: 8,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Welcome back',
-                            style: TextStyle(color: Colors.white.withValues(alpha: 0.45), fontSize: 11, letterSpacing: 0.3),
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            name,
-                            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800, letterSpacing: -0.4),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            email,
-                            style: TextStyle(color: Colors.white.withValues(alpha: 0.35), fontSize: 11.5),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.07),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
-                        ),
-                        child: const Icon(Icons.close_rounded, color: Colors.white38, size: 16),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
+                // Avatar with geometric border
                 Container(
-                  height: 1,
+                  width: 54,
+                  height: 54,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.transparent, Colors.white.withValues(alpha: 0.10), Colors.transparent],
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF6366F1), Color(0xFF7C3AED)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: const Color(0xFF6366F1).withValues(alpha: 0.4),
+                      width: 2,
+                    ),
+                  ),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Text(
+                          initial,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 2,
+                        right: 2,
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF22C55E),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: const Color(0xFF070D1A),
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome back',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.4),
+                          fontSize: 11,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.4,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        email,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.32),
+                          fontSize: 11,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.10),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.close_rounded,
+                      color: Colors.white38,
+                      size: 15,
                     ),
                   ),
                 ),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _MiniBalanceCard(
-                        label: 'BALANCE',
-                        value: visible ? Formatters.money(balance) : '₹ ••••',
-                        icon: Icons.account_balance_wallet_rounded,
-                        iconColor: const Color(0xFF6366F1),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _MiniBalanceCard(
-                        label: 'AVAILABLE',
-                        value: visible ? Formatters.money(remaining) : '₹ ••••',
-                        icon: Icons.wallet_outlined,
-                        iconColor: const Color(0xFF22C55E),
-                        highlight: true,
-                      ),
-                    ),
-                  ],
+              ],
+            ),
+            const SizedBox(height: 14),
+            Container(height: 1, color: Colors.white.withValues(alpha: 0.07)),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _MiniBalanceCard(
+                    label: 'BALANCE',
+                    value: visible ? Formatters.money(balance) : '₹ ••••',
+                    icon: Icons.account_balance_wallet_rounded,
+                    accentColor: const Color(0xFF6366F1),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _MiniBalanceCard(
+                    label: 'AVAILABLE',
+                    value: visible ? Formatters.money(remaining) : '₹ ••••',
+                    icon: Icons.wallet_outlined,
+                    accentColor: const Color(0xFF22C55E),
+                    highlight: true,
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ).animate().fadeIn(duration: 280.ms).slideX(begin: -0.05);
   }
@@ -551,69 +570,51 @@ class _SidebarHeader extends StatelessWidget {
 class _MiniBalanceCard extends StatelessWidget {
   final String label, value;
   final IconData icon;
-  final Color iconColor;
+  final Color accentColor;
   final bool highlight;
 
   const _MiniBalanceCard({
     required this.label,
     required this.value,
     required this.icon,
-    required this.iconColor,
+    required this.accentColor,
     this.highlight = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.white.withValues(alpha: highlight ? 0.09 : 0.05),
-            Colors.white.withValues(alpha: highlight ? 0.04 : 0.02),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(18),
+        color: accentColor.withValues(alpha: highlight ? 0.10 : 0.06),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: highlight ? iconColor.withValues(alpha: 0.25) : Colors.white.withValues(alpha: 0.08),
+          color: accentColor.withValues(alpha: highlight ? 0.25 : 0.12),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: iconColor.withValues(alpha: highlight ? 0.14 : 0.08),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: iconColor.withValues(alpha: 0.20),
-                  blurRadius: 12,
-                ),
-              ],
-            ),
-            child: Icon(icon, color: iconColor, size: 16),
-          ),
-          const SizedBox(height: 10),
+          Icon(icon, color: accentColor, size: 16),
+          const SizedBox(height: 8),
           Text(
             label,
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.38), fontSize: 9.5, fontWeight: FontWeight.w800, letterSpacing: 1.4),
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.38),
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.4,
+            ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           Text(
             value,
-            style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800, letterSpacing: -0.3),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.3,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -629,46 +630,43 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 2),
-        child: Row(
-          children: [
-            Container(
-              width: 18,
-              height: 1.4,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.primary.withValues(alpha: 0.65), Colors.transparent],
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              text.toUpperCase(),
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.34),
-                fontSize: 9.5,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 2.2,
-              ),
-            ),
-          ],
+    padding: const EdgeInsets.fromLTRB(20, 8, 20, 2),
+    child: Row(
+      children: [
+        Container(
+          width: 14,
+          height: 1.5,
+          color: const Color(0xFF6366F1).withValues(alpha: 0.6),
         ),
-      );
+        const SizedBox(width: 8),
+        Text(
+          text.toUpperCase(),
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.32),
+            fontSize: 9.5,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 2.2,
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
+// ── Action card with subtle geometric pattern ─────────────────────────────────
 class _SidebarAction extends StatefulWidget {
   final IconData icon;
   final String label, subtitle;
-  final LinearGradient gradient;
-  final Color glowColor;
+  final Color accentColor;
+  final _PatternType patternType;
   final VoidCallback onTap;
 
   const _SidebarAction({
     required this.icon,
     required this.label,
     required this.subtitle,
-    required this.gradient,
-    required this.glowColor,
+    required this.accentColor,
+    required this.patternType,
     required this.onTap,
   });
 
@@ -691,41 +689,38 @@ class _SidebarActionState extends State<_SidebarAction> {
       onTapCancel: () => setState(() => _pressed = false),
       child: AnimatedScale(
         scale: _pressed ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 110),
+        duration: const Duration(milliseconds: 100),
         child: Container(
-          margin: const EdgeInsets.fromLTRB(14, 4, 14, 4),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+          margin: const EdgeInsets.fromLTRB(14, 3, 14, 3),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withValues(alpha: _pressed ? 0.08 : 0.05),
-                Colors.white.withValues(alpha: _pressed ? 0.05 : 0.025),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+            color: _pressed
+                ? widget.accentColor.withValues(alpha: 0.10)
+                : Colors.white.withValues(alpha: 0.04),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _pressed
+                  ? widget.accentColor.withValues(alpha: 0.30)
+                  : Colors.white.withValues(alpha: 0.07),
             ),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: Colors.white.withValues(alpha: _pressed ? 0.14 : 0.08)),
-            boxShadow: [
-              BoxShadow(
-                color: widget.glowColor.withValues(alpha: _pressed ? 0.24 : 0.12),
-                blurRadius: _pressed ? 24 : 18,
-                offset: const Offset(0, 8),
-              ),
-            ],
           ),
           child: Stack(
             children: [
+              // Geometric pattern in background
               Positioned(
-                right: -10,
-                top: -10,
-                child: Container(
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [widget.glowColor.withValues(alpha: 0.14), Colors.transparent],
+                right: 0,
+                top: 0,
+                bottom: 0,
+                width: 80,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
+                  ),
+                  child: CustomPaint(
+                    painter: _ActionPatternPainter(
+                      color: widget.accentColor,
+                      type: widget.patternType,
                     ),
                   ),
                 ),
@@ -733,20 +728,20 @@ class _SidebarActionState extends State<_SidebarAction> {
               Row(
                 children: [
                   Container(
-                    width: 44,
-                    height: 44,
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
-                      gradient: widget.gradient,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: widget.glowColor.withValues(alpha: 0.35),
-                          blurRadius: 18,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
+                      color: widget.accentColor.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: widget.accentColor.withValues(alpha: 0.25),
+                      ),
                     ),
-                    child: Icon(widget.icon, color: Colors.white, size: 19),
+                    child: Icon(
+                      widget.icon,
+                      color: widget.accentColor,
+                      size: 18,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -755,17 +750,29 @@ class _SidebarActionState extends State<_SidebarAction> {
                       children: [
                         Text(
                           widget.label,
-                          style: const TextStyle(color: Colors.white, fontSize: 13.2, fontWeight: FontWeight.w700, letterSpacing: -0.1),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.1,
+                          ),
                         ),
                         const SizedBox(height: 1),
                         Text(
                           widget.subtitle,
-                          style: TextStyle(color: Colors.white.withValues(alpha: 0.38), fontSize: 11),
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.36),
+                            fontSize: 10.5,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios_rounded, color: Colors.white.withValues(alpha: 0.22), size: 12),
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: widget.accentColor.withValues(alpha: 0.5),
+                    size: 11,
+                  ),
                 ],
               ),
             ],
@@ -776,6 +783,65 @@ class _SidebarActionState extends State<_SidebarAction> {
   }
 }
 
+// ── Pattern painter for action cards ─────────────────────────────────────────
+class _ActionPatternPainter extends CustomPainter {
+  final Color color;
+  final _PatternType type;
+
+  const _ActionPatternPainter({required this.color, required this.type});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color.withValues(alpha: 0.08)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.8;
+
+    switch (type) {
+      case _PatternType.grid:
+        for (double x = 0; x < size.width; x += 12) {
+          canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+        }
+        for (double y = 0; y < size.height; y += 12) {
+          canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+        }
+        break;
+      case _PatternType.dots:
+        paint.style = PaintingStyle.fill;
+        paint.color = color.withValues(alpha: 0.12);
+        for (double x = 8; x < size.width; x += 12) {
+          for (double y = 8; y < size.height; y += 12) {
+            canvas.drawCircle(Offset(x, y), 1.2, paint);
+          }
+        }
+        break;
+      case _PatternType.diagonal:
+        for (double i = -size.height; i < size.width + size.height; i += 14) {
+          canvas.drawLine(
+            Offset(i, 0),
+            Offset(i + size.height, size.height),
+            paint,
+          );
+        }
+        break;
+      case _PatternType.chevron:
+        for (double y = 0; y < size.height + 20; y += 14) {
+          final path = Path()
+            ..moveTo(0, y)
+            ..lineTo(size.width / 2, y - 10)
+            ..lineTo(size.width, y);
+          canvas.drawPath(path, paint);
+        }
+        break;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ActionPatternPainter old) =>
+      old.color != color || old.type != type;
+}
+
+// ── Nav Item ──────────────────────────────────────────────────────────────────
 class _NavItem extends StatefulWidget {
   final IconData icon;
   final String label, path;
@@ -802,64 +868,46 @@ class _NavItemState extends State<_NavItem> {
       },
       onTapCancel: () => setState(() => _pressed = false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        margin: const EdgeInsets.fromLTRB(14, 3, 14, 3),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        duration: const Duration(milliseconds: 150),
+        margin: const EdgeInsets.fromLTRB(14, 2, 14, 2),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
         decoration: BoxDecoration(
-          gradient: current
-              ? LinearGradient(
-                  colors: [
-                    AppColors.primary.withValues(alpha: 0.18),
-                    AppColors.primaryAlt.withValues(alpha: 0.09),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : null,
-          color: current ? null : (_pressed ? Colors.white.withValues(alpha: 0.05) : Colors.transparent),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(
-            color: current ? AppColors.primary.withValues(alpha: 0.35) : Colors.transparent,
+          color: current
+              ? const Color(0xFF6366F1).withValues(alpha: 0.12)
+              : (_pressed
+                    ? Colors.white.withValues(alpha: 0.04)
+                    : Colors.transparent),
+          borderRadius: BorderRadius.circular(14),
+          border: Border(
+            left: BorderSide(
+              color: current ? const Color(0xFF6366F1) : Colors.transparent,
+              width: 2,
+            ),
           ),
-          boxShadow: current
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.20),
-                    blurRadius: 22,
-                    offset: const Offset(0, 8),
-                  ),
-                ]
-              : [],
         ),
         child: Row(
           children: [
             AnimatedContainer(
-              duration: const Duration(milliseconds: 160),
-              width: 36,
-              height: 36,
+              duration: const Duration(milliseconds: 150),
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
-                gradient: current
-                    ? const LinearGradient(
-                        colors: [Color(0xFF6366F1), Color(0xFF7C3AED)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      )
-                    : null,
-                color: current ? null : Colors.white.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(11),
-                boxShadow: current
-                    ? [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.28),
-                          blurRadius: 18,
-                        ),
-                      ]
-                    : [],
+                color: current
+                    ? const Color(0xFF6366F1).withValues(alpha: 0.20)
+                    : Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: current
+                      ? const Color(0xFF6366F1).withValues(alpha: 0.35)
+                      : Colors.transparent,
+                ),
               ),
               child: Icon(
                 widget.icon,
-                color: current ? Colors.white : Colors.white.withValues(alpha: 0.42),
-                size: 17,
+                color: current
+                    ? const Color(0xFF6366F1)
+                    : Colors.white.withValues(alpha: 0.40),
+                size: 16,
               ),
             ),
             const SizedBox(width: 12),
@@ -867,8 +915,10 @@ class _NavItemState extends State<_NavItem> {
               child: Text(
                 widget.label,
                 style: TextStyle(
-                  color: current ? Colors.white : Colors.white.withValues(alpha: 0.58),
-                  fontSize: 13.5,
+                  color: current
+                      ? Colors.white
+                      : Colors.white.withValues(alpha: 0.55),
+                  fontSize: 13,
                   fontWeight: current ? FontWeight.w700 : FontWeight.w500,
                   letterSpacing: -0.1,
                 ),
@@ -876,17 +926,17 @@ class _NavItemState extends State<_NavItem> {
             ),
             if (current)
               Container(
-                width: 7,
-                height: 7,
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.7),
-                      blurRadius: 10,
-                    ),
-                  ],
+                  color: const Color(0xFF6366F1).withValues(alpha: 0.20),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: const Color(0xFF6366F1).withValues(alpha: 0.30),
+                  ),
+                ),
+                child: const Text(
+                  '●',
+                  style: TextStyle(color: Color(0xFF6366F1), fontSize: 6),
                 ),
               ),
           ],
@@ -896,6 +946,7 @@ class _NavItemState extends State<_NavItem> {
   }
 }
 
+// ── Logout tile ───────────────────────────────────────────────────────────────
 class _LogoutTile extends ConsumerStatefulWidget {
   @override
   ConsumerState<_LogoutTile> createState() => _LogoutTileState();
@@ -919,53 +970,52 @@ class _LogoutTileState extends ConsumerState<_LogoutTile> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 140),
         margin: const EdgeInsets.fromLTRB(14, 4, 14, 0),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFFEF4444).withValues(alpha: _pressed ? 0.18 : 0.10),
-              const Color(0xFFEF4444).withValues(alpha: _pressed ? 0.10 : 0.04),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(18),
+          color: const Color(
+            0xFFEF4444,
+          ).withValues(alpha: _pressed ? 0.14 : 0.07),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: const Color(0xFFEF4444).withValues(alpha: _pressed ? 0.35 : 0.20),
+            color: const Color(
+              0xFFEF4444,
+            ).withValues(alpha: _pressed ? 0.35 : 0.18),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFEF4444).withValues(alpha: 0.18),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
         ),
         child: Row(
           children: [
             Container(
-              width: 36,
-              height: 36,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
-                color: const Color(0xFFEF4444).withValues(alpha: 0.18),
-                borderRadius: BorderRadius.circular(11),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFEF4444).withValues(alpha: 0.18),
-                    blurRadius: 14,
-                  ),
-                ],
+                color: const Color(0xFFEF4444).withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: const Color(0xFFEF4444).withValues(alpha: 0.25),
+                ),
               ),
-              child: const Icon(Icons.logout_rounded, color: Color(0xFFEF4444), size: 17),
+              child: const Icon(
+                Icons.logout_rounded,
+                color: Color(0xFFEF4444),
+                size: 16,
+              ),
             ),
             const SizedBox(width: 12),
             const Expanded(
               child: Text(
                 'Log out',
-                style: TextStyle(color: Color(0xFFEF4444), fontSize: 14, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  color: Color(0xFFEF4444),
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios_rounded, size: 12, color: const Color(0xFFEF4444).withValues(alpha: 0.45)),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 11,
+              color: const Color(0xFFEF4444).withValues(alpha: 0.45),
+            ),
           ],
         ),
       ),
@@ -973,20 +1023,20 @@ class _LogoutTileState extends ConsumerState<_LogoutTile> {
   }
 }
 
+// ── Divider ───────────────────────────────────────────────────────────────────
 class _SidebarDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
-        height: 1,
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.transparent,
-              AppColors.primary.withValues(alpha: 0.16),
-              Colors.white.withValues(alpha: 0.10),
-              Colors.transparent,
-            ],
-          ),
-        ),
-      );
+    height: 1,
+    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [
+          Colors.transparent,
+          Colors.white.withValues(alpha: 0.08),
+          Colors.transparent,
+        ],
+      ),
+    ),
+  );
 }
