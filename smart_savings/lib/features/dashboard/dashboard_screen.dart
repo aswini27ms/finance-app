@@ -1053,12 +1053,6 @@ class _EmptyFolders extends StatelessWidget {
           const SizedBox(height: 8),
           Text('No folders yet',
               style: TextStyle(color: Colors.grey[500], fontSize: 13)),
-          const SizedBox(height: 8),
-          TextButton.icon(
-            onPressed: onAdd,
-            icon: const Icon(Icons.add, size: 16),
-            label: const Text('Create one'),
-          ),
         ],
       ),
     );

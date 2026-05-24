@@ -59,204 +59,161 @@ class _AiCoachScreenState extends ConsumerState<AiCoachScreen> {
   @override
   Widget build(BuildContext context) {
     final msgs = ref.watch(coachMessagesProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Auto-scroll when new messages arrive
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    // Only scroll down when conversation is active
+    if (msgs.length > 1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    }
+
+    // Show chips only on fresh/cleared state (just welcome message)
+    final showChips = msgs.length == 1 && !msgs.first.fromUser;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: _buildAppBar(context, isDark),
+      backgroundColor: const Color(0xFF070D1A),
+      appBar: _buildAppBar(context),
       body: PremiumPageBackground(
         child: Column(
           children: [
-          // ── Quick suggestion chips ───────────────────────────────────
-          if (msgs.length <= 1)
-            _QuickChips(onTap: (s) {
-              _ctrl.text = s;
-              _send();
-            }),
-
-          // ── Message list ─────────────────────────────────────────────
-          Expanded(
-            child: ListView.builder(
-              controller: _scroll,
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              itemCount: msgs.length,
-              itemBuilder: (_, i) => _MessageBubble(
-                message: msgs[i],
-                isDark: isDark,
+            if (showChips)
+              _QuickChips(onTap: (s) {
+                _ctrl.text = s;
+                _send();
+              }),
+            Expanded(
+              child: ListView.builder(
+                controller: _scroll,
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                itemCount: msgs.length,
+                itemBuilder: (_, i) => _MessageBubble(message: msgs[i]),
               ),
             ),
-          ),
-
-          // ── Input bar ────────────────────────────────────────────────
-          _InputBar(
-            ctrl: _ctrl,
-            hasText: _hasText,
-            isDark: isDark,
-            onSend: _send,
-          ),
+            _InputBar(
+              ctrl: _ctrl,
+              hasText: _hasText,
+              onSend: _send,
+            ),
           ],
         ),
       ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, bool isDark) {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      leading: SidebarMenuButton(),
+      leading: const SidebarMenuButton(),
       titleSpacing: 0,
       title: Row(
         children: [
           Container(
-            width: 36,
-            height: 36,
+            width: 38,
+            height: 38,
             decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(11),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.35),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              color: const Color(0xFF6366F1).withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.30),
+              ),
             ),
-            child: const Icon(Icons.auto_awesome_rounded,
-                color: Colors.white, size: 18),
+            child: const Icon(
+              Icons.auto_awesome_rounded,
+              color: Color(0xFF6366F1),
+              size: 18,
+            ),
           ),
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('AI Coach',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
-                      letterSpacing: -0.3)),
-              Text('Powered by Gemini',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.4)
-                        : Colors.black.withValues(alpha: 0.4),
-                    fontWeight: FontWeight.w500,
-                  )),
+              const Text(
+                'AI Coach',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF22C55E),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    'Online · Powered by Groq',
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      color: Colors.white.withValues(alpha: 0.40),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ],
       ),
-      actions: [
-        // Clear chat button
-        GestureDetector(
-          onTap: () {
-            HapticFeedback.mediumImpact();
-            showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                title: const Text('Clear chat?',
-                    style: TextStyle(fontWeight: FontWeight.w800)),
-                content: const Text('This will reset the conversation history.',
-                    style: TextStyle(color: Colors.grey)),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel')),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      ref.read(coachMessagesProvider.notifier).clearHistory();
-                    },
-                    child: const Text('Clear',
-                        style: TextStyle(color: Colors.red)),
-                  ),
-                ],
-              ),
-            );
-          },
-          child: Container(
-            width: 36,
-            height: 36,
-            margin: const EdgeInsets.only(right: 12),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.07)
-                  : Colors.black.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(11),
-              border: Border.all(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.10)
-                    : Colors.black.withValues(alpha: 0.07),
-              ),
-            ),
-            child: Icon(Icons.refresh_rounded,
-                size: 18,
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.7)
-                    : Colors.black54),
-          ),
-        ),
-      ],
     );
   }
 }
 
-// ── Quick suggestion chips ────────────────────────────────────────────────────
+// ── Quick chips ───────────────────────────────────────────────────────────────
 class _QuickChips extends StatelessWidget {
   final void Function(String) onTap;
   const _QuickChips({required this.onTap});
 
   static const _suggestions = [
-    '📊 Analyse my spending',
-    '💡 How to save more?',
-    '🎯 Set a savings goal',
-    '⚠️ Am I overspending?',
+    ('📊', 'Analyse my spending'),
+    ('💡', 'How to save more?'),
+    ('🎯', 'Set a savings goal'),
+    ('⚠️', 'Am I overspending?'),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      height: 48,
-      margin: const EdgeInsets.only(bottom: 4),
+    return SizedBox(
+      height: 52,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         itemCount: _suggestions.length,
         separatorBuilder: (_, __) => const SizedBox(width: 8),
-        itemBuilder: (_, i) => GestureDetector(
-          onTap: () => onTap(_suggestions[i].substring(2).trim()),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.07)
-                  : Colors.black.withValues(alpha: 0.04),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.10)
-                    : Colors.black.withValues(alpha: 0.07),
+        itemBuilder: (_, i) {
+          final (emoji, label) = _suggestions[i];
+          return GestureDetector(
+            onTap: () => onTap(label),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF6366F1).withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                    color: const Color(0xFF6366F1).withValues(alpha: 0.20)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(emoji, style: const TextStyle(fontSize: 13)),
+                  const SizedBox(width: 6),
+                  Text(label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white.withValues(alpha: 0.70),
+                      )),
+                ],
               ),
             ),
-            child: Text(
-              _suggestions[i],
-              style: TextStyle(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w600,
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.75)
-                    : Colors.black.withValues(alpha: 0.65),
-              ),
-            ),
-          ),
-        ).animate().fadeIn(delay: (i * 60).ms).slideX(begin: 0.06),
+          ).animate().fadeIn(delay: (i * 60).ms).slideX(begin: 0.06);
+        },
       ),
     );
   }
@@ -265,80 +222,60 @@ class _QuickChips extends StatelessWidget {
 // ── Message bubble ────────────────────────────────────────────────────────────
 class _MessageBubble extends StatelessWidget {
   final CoachMessage message;
-  final bool isDark;
-  const _MessageBubble({required this.message, required this.isDark});
+  const _MessageBubble({required this.message});
 
   @override
   Widget build(BuildContext context) {
     final isUser = message.fromUser;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         mainAxisAlignment:
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // AI avatar
           if (!isUser) ...[
             Container(
-              width: 30,
-              height: 30,
+              width: 28,
+              height: 28,
               margin: const EdgeInsets.only(right: 8, bottom: 2),
               decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
+                color: const Color(0xFF6366F1).withValues(alpha: 0.15),
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                  ),
-                ],
+                border: Border.all(
+                    color: const Color(0xFF6366F1).withValues(alpha: 0.30)),
               ),
               child: const Icon(Icons.auto_awesome_rounded,
-                  color: Colors.white, size: 14),
+                  color: Color(0xFF6366F1), size: 13),
             ),
           ],
-
-          // Bubble
           Flexible(
             child: Container(
               padding: message.isLoading
                   ? const EdgeInsets.symmetric(horizontal: 16, vertical: 14)
-                  : const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  : const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
               constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * 0.72),
+                  maxWidth: MediaQuery.of(context).size.width * 0.74),
               decoration: BoxDecoration(
-                gradient: isUser ? AppColors.primaryGradient : null,
                 color: isUser
-                    ? null
+                    ? const Color(0xFF6366F1)
                     : message.isError
-                        ? Colors.red.withValues(alpha: isDark ? 0.15 : 0.08)
-                        : (isDark ? const Color(0xFF131A2E) : Colors.white),
+                        ? const Color(0xFFEF4444).withValues(alpha: 0.12)
+                        : const Color(0xFF111827),
                 borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(20),
-                  topRight: const Radius.circular(20),
-                  bottomLeft: Radius.circular(isUser ? 20 : 4),
-                  bottomRight: Radius.circular(isUser ? 4 : 20),
+                  topLeft: const Radius.circular(18),
+                  topRight: const Radius.circular(18),
+                  bottomLeft: Radius.circular(isUser ? 18 : 4),
+                  bottomRight: Radius.circular(isUser ? 4 : 18),
                 ),
                 border: isUser
                     ? null
                     : Border.all(
                         color: message.isError
-                            ? Colors.red.withValues(alpha: 0.3)
-                            : (isDark
-                                ? Colors.white.withValues(alpha: 0.07)
-                                : Colors.black.withValues(alpha: 0.06)),
+                            ? const Color(0xFFEF4444).withValues(alpha: 0.25)
+                            : Colors.white.withValues(alpha: 0.07),
                       ),
-                boxShadow: [
-                  BoxShadow(
-                    color: isUser
-                        ? AppColors.primary.withValues(alpha: 0.20)
-                        : Colors.black.withValues(alpha: isDark ? 0.15 : 0.05),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
               ),
               child: message.isLoading
                   ? const _TypingIndicator()
@@ -348,27 +285,25 @@ class _MessageBubble extends StatelessWidget {
                         color: isUser
                             ? Colors.white
                             : message.isError
-                                ? Colors.red
-                                : null,
+                                ? const Color(0xFFEF4444)
+                                : Colors.white.withValues(alpha: 0.88),
                         fontSize: 14,
-                        height: 1.45,
+                        height: 1.5,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
             ),
           ),
-
-          // User avatar spacer
           if (isUser) const SizedBox(width: 4),
         ],
       ),
-    ).animate().fadeIn(duration: 250.ms).slideY(begin: 0.08);
+    ).animate().fadeIn(duration: 220.ms).slideY(begin: 0.06);
   }
 }
 
-// ── Animated typing dots ──────────────────────────────────────────────────────
+// ── Typing dots ───────────────────────────────────────────────────────────────
 class _TypingIndicator extends StatefulWidget {
   const _TypingIndicator();
-
   @override
   State<_TypingIndicator> createState() => _TypingIndicatorState();
 }
@@ -384,24 +319,18 @@ class _TypingIndicatorState extends State<_TypingIndicator>
     _ctrls = List.generate(
       3,
       (i) => AnimationController(
-        vsync: this,
-        duration: const Duration(milliseconds: 500),
-      )..repeat(
-          reverse: true,
-          period: Duration(milliseconds: 900 + i * 150),
-        ),
+          vsync: this, duration: Duration(milliseconds: 500 + i * 100))
+        ..repeat(reverse: true),
     );
     _anims = _ctrls
-        .map((c) => Tween<double>(begin: 0, end: 1)
+        .map((c) => Tween<double>(begin: 0.3, end: 1.0)
             .animate(CurvedAnimation(parent: c, curve: Curves.easeInOut)))
         .toList();
   }
 
   @override
   void dispose() {
-    for (final c in _ctrls) {
-      c.dispose();
-    }
+    for (final c in _ctrls) c.dispose();
     super.dispose();
   }
 
@@ -417,8 +346,7 @@ class _TypingIndicatorState extends State<_TypingIndicator>
             height: 7,
             margin: EdgeInsets.only(right: i < 2 ? 5 : 0),
             decoration: BoxDecoration(
-              color: AppColors.primary
-                  .withValues(alpha: 0.4 + _anims[i].value * 0.6),
+              color: const Color(0xFF6366F1).withValues(alpha: _anims[i].value),
               shape: BoxShape.circle,
             ),
           ),
@@ -432,46 +360,32 @@ class _TypingIndicatorState extends State<_TypingIndicator>
 class _InputBar extends StatelessWidget {
   final TextEditingController ctrl;
   final bool hasText;
-  final bool isDark;
   final VoidCallback onSend;
 
-  const _InputBar({
-    required this.ctrl,
-    required this.hasText,
-    required this.isDark,
-    required this.onSend,
-  });
+  const _InputBar(
+      {required this.ctrl, required this.hasText, required this.onSend});
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
         decoration: BoxDecoration(
-          color: isDark
-              ? const Color(0xFF0D1528).withValues(alpha: 0.95)
-              : Colors.white.withValues(alpha: 0.95),
+          color: const Color(0xFF0A1020),
           border: Border(
-            top: BorderSide(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.07)
-                  : Colors.black.withValues(alpha: 0.06),
-            ),
-          ),
+              top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
         ),
         child: Row(
           children: [
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.07)
-                      : Colors.black.withValues(alpha: 0.04),
-                  borderRadius: BorderRadius.circular(26),
+                  color: const Color(0xFF111827),
+                  borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.10)
-                        : Colors.black.withValues(alpha: 0.07),
+                    color: hasText
+                        ? const Color(0xFF6366F1).withValues(alpha: 0.40)
+                        : Colors.white.withValues(alpha: 0.08),
                   ),
                 ),
                 child: TextField(
@@ -480,15 +394,12 @@ class _InputBar extends StatelessWidget {
                   maxLines: 4,
                   minLines: 1,
                   textInputAction: TextInputAction.send,
-                  style: const TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14, color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Ask your finance coach…',
                     hintStyle: TextStyle(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.30)
-                          : Colors.black.withValues(alpha: 0.30),
-                      fontSize: 14,
-                    ),
+                        color: Colors.white.withValues(alpha: 0.28),
+                        fontSize: 14),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 18, vertical: 12),
@@ -497,43 +408,32 @@ class _InputBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-
-            // Send button
             AnimatedScale(
-              scale: hasText ? 1.0 : 0.85,
+              scale: hasText ? 1.0 : 0.88,
               duration: const Duration(milliseconds: 180),
               curve: Curves.easeOutBack,
               child: GestureDetector(
                 onTap: onSend,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: 48,
-                  height: 48,
+                  width: 46,
+                  height: 46,
                   decoration: BoxDecoration(
-                    gradient: hasText ? AppColors.primaryGradient : null,
                     color: hasText
-                        ? null
-                        : (isDark
-                            ? Colors.white.withValues(alpha: 0.07)
-                            : Colors.black.withValues(alpha: 0.05)),
+                        ? const Color(0xFF6366F1)
+                        : Colors.white.withValues(alpha: 0.06),
                     shape: BoxShape.circle,
-                    boxShadow: hasText
-                        ? [
-                            BoxShadow(
-                              color: AppColors.primary.withValues(alpha: 0.40),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
-                            ),
-                          ]
-                        : [],
+                    border: Border.all(
+                      color: hasText
+                          ? Colors.transparent
+                          : Colors.white.withValues(alpha: 0.08),
+                    ),
                   ),
                   child: Icon(
                     Icons.arrow_upward_rounded,
                     color: hasText
                         ? Colors.white
-                        : (isDark
-                            ? Colors.white.withValues(alpha: 0.3)
-                            : Colors.black.withValues(alpha: 0.25)),
+                        : Colors.white.withValues(alpha: 0.25),
                     size: 20,
                   ),
                 ),
